@@ -1,0 +1,27 @@
+from tensorflow.keras.models import Sequential  # Imports the Sequential model type from Keras
+from tensorflow.keras.layers import Dense, Flatten  # Imports the Dense and Flatten layer types
+from tensorflow.keras.datasets import mnist  # Imports the MNIST dataset
+
+# Model Definition
+model = Sequential([ # Creates a Sequential model, which is a linear stack of layers
+    Flatten(input_shape=(28, 28)),  # Flatten layer: transforms the 2D image (28x28) into a 1D vector (784)
+    Dense(128, activation='relu'),  # Dense layer: 128 neurons, ReLU activation function
+    Dense(64, activation='relu'),  # Dense layer: 64 neurons, ReLU activation function
+    Dense(10, activation='softmax')  # Dense layer: 10 neurons (output layer for 10 digits), softmax activation (probabilities)
+])
+
+# Compilation
+model.compile(optimizer='adam', # Sets the optimizer to 'adam' (common choice)
+              loss='sparse_categorical_crossentropy', # Loss function for multi-class classification with integer labels
+              metrics=['accuracy']) # Metric to track during training and evaluation
+
+# Data Loading and Preprocessing
+(x_train, y_train), (x_test, y_test) = mnist.load_data() # Loads the MNIST dataset
+x_train, x_test = x_train / 255.0, x_test / 255.0 # Normalizes pixel values (0-255) to the range 0-1
+
+# Training
+model.fit(x_train, y_train, epochs=3, validation_data=(x_test, y_test)) # Trains the model for 3 epochs, uses (x_test, y_test) for validation
+
+# Evaluation
+test_loss, test_accuracy = model.evaluate(x_test, y_test) # Evaluates the model on the test set
+print(f"Test Accuracy: {test_accuracy * 100:.2f}%") # Prints the test accuracy
